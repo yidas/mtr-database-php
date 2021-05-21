@@ -1,0 +1,16 @@
+{
+    "name": "yidas/mtr-database",
+    "description": "MTR Batch processing storing in database with dashboard",
+    "keywords": ["monitoring", "latency", "internet-connection", "speed", "mtr"],
+    "homepage": "https://github.com/yidas/mtr-database-php",
+    "type": "project",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/yidas/mtr-database-php/issues",
+        "source": "https://github.com/yidas/mtr-database-php"
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.4.0"
+    }
+}
