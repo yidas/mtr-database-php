@@ -10,14 +10,17 @@ OUTLINE
 -------
 
 - [Demonstration](#demonstration)
+- [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Installation](#installation)
     - [Download](#download) 
     - [Startup](#startup)
+        - [Database Setup](#database-setup)
+        - [Agent Setup & Launch](#agent-setup--launch)
+        - [Dashboard](#dashboard)  
 - [Usage](#usage)
-    - [Launch](#launch)
+    - [Agent Configuration](#agent-configuration)
     - [Purge](#purge) 
-    - [Dashboard](#Dashboard)
 - [References](#references)
 
 ---
@@ -25,7 +28,14 @@ OUTLINE
 DEMONSTRATION
 -------------
 
-<img src="https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/demo-dashboard-overview.png" height="300" /><img src="https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/demo-dashboard-table-details.png" height="300" />
+<img src="https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/demo-dashboard-overview.png" height="260" /><img src="https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/demo-dashboard-table-details.png" height="260" />
+
+---
+
+INTRODUCTION
+------------
+
+![Basic Flow](https://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/architecture-diagram.plantuml)
 
 ---
 
@@ -67,11 +77,51 @@ $ tar -zxvf mtr-database-php.tar.gz
 
 ### Startup
 
-After the download, you could start to set up the `config.inc.php` with your database connection, and run `install.php` which will help you to install the database & table:
+#### Database Setup
+
+After the download, you could start to set up the `config.inc.php` with your database connection:
+
+```php
+...
+    'database' => [
+        'host' => '',
+        'driver'    => 'mysql',
+        'database'  => 'mtr_database',
+        'username'  => '',
+        'password'  => '',
+        'table' => 'records',
+        'charset'   => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+    ],
+...
+```
+
+Then run `install.php` which will help you to install the database & table:
 
 ```shell
 $ php install.php
 Installation completed
+```
+
+#### Agent Setup & Launch
+
+The default setting of the agent can be configurated in `config.inc.php`:
+
+```php
+...
+    'general' => [
+        'mtrCmd' => 'mtr',
+        'timezone' => 'Asia/Taipei',
+        'category' => 'agent-01',   // Category mark for distinguishing
+    ],
+    'mtr' => [
+        'host' => 'your.host',
+        'period' => 10,     // Minute
+        'count' => 60,      // Report-cycles
+        'tcp' => false,     // TCP mode
+        'port' => 443,      // Port number for TCP mode
+    ],
+...
 ```
 
 After the installation, enjoy to run or set `launch.php` with your prefered arguments in crontab:
@@ -84,7 +134,7 @@ Process success
 Set crontab into `/etc/cron.d/mtr-database`:
 
 ```shell
-# Launch and record MTR every 10 miniutes by default
+# Launch and record MTR every 10 miniutes by default ('period' => 10)
 */10 * * * * root php /var/www/html/mtr-database/launch.php >/dev/null 2>&1
 
 # Purge data before 90 days by default (Optional)
@@ -93,12 +143,31 @@ Set crontab into `/etc/cron.d/mtr-database`:
 
 > The default batch period is configured to be 10 minutes, so we can set the batch to be executed every 10 minutes.
 
+#### Dashboard
+
+The endpoint of MTR Dashboard is `/index.php` and it's enabled by default, you could place the project in the web path such as `/var/www/html/mtr-database/index.php`.
+
+For the authentication, you could easily set the username and password in `config.ini.php`:
+
+```php
+...
+    'dashboard' => [
+        'enable' => true,
+        'username' => '',
+        'password' => '',
+        'categories' => [''],   // Category list for selection
+    ],
+...
+```
+
+> `categories` will enable you to query specific data by category settings or query all data with default blank values.
+
 ---
 
 USAGE
 -----
 
-### Launch
+### Agent Configuration
 
 The configuration file `config.inc.php` allows you to set the default settings for MTR launching. However, you can also specify parameters immediately in the command to be run.
 
@@ -134,6 +203,14 @@ TCP argument allows you to use MTR TCP mode with specified port, `-T --tcp` for 
 php launch.php --tcp -port=443
 ```
 
+#### Category
+
+Category allows to categorize each monitor command and supports filtering from the dashboard, which also can be achieved by using the `--category` parameter:
+
+```shell
+php launch.php --category="Monitor-A1"
+```
+
 ### Purge
 
 Running `purge.php` will delete old records older than the given number of days. You can use the `-d --days` parameter to set with (default is 90 days):
@@ -141,25 +218,6 @@ Running `purge.php` will delete old records older than the given number of days.
 ```shell
 00 00 * * * root php /var/www/html/mtr-database/purge.php --days=30 >/dev/null 2>&1
 ```
-
-### Dashboard
-
-The endpoint of MTR Dashboard is `/index.php` and it's enabled by default, you could place the project in the web path such as `/var/www/html/mtr-database/index.php`.
-
-For the authentication, you could easily set the username and password in `config.ini.php`:
-
-```php
-...
-    'dashboard' => [
-        'enable' => true,
-        'username' => '',
-        'password' => '',
-        'categories' => [''],   // Category list for selection
-    ],
-...
-```
-
-> `categories` will enable you to query specific data by category settings or query all data with default blank values.
 
 
 ---

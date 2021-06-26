@@ -1,0 +1,29 @@
+@startuml
+
+package "IP .101" {
+  component "Agent" as agent
+  component "Dashboard" as dashboard
+  database "Database" as db
+  Interface "HTTP" as http
+  dashboard -right- http
+  agent -right-> db
+  dashboard <-left- db
+}
+
+package "IP .102" {
+  component "Agent" as agent2 
+}
+
+package "IP .103" {
+  component "Agent" as agent3
+  component "Dashboard" as dashboard2
+  Interface "HTTP" as http2
+  dashboard2 -right- http2
+}
+
+agent2 -down-> db
+agent3 -up-> db
+dashboard2 <-up- db
+
+
+@enduml
