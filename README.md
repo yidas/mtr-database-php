@@ -9,6 +9,7 @@ MTR Batch processing storing in database with dashboard
 OUTLINE
 -------
 
+- [Demonstration](#demonstration)
 - [Requirements](#requirements)
 - [Installation](#installation)
     - [Download](#download) 
@@ -18,6 +19,13 @@ OUTLINE
     - [Purge](#purge) 
     - [Dashboard](#Dashboard)
 - [References](#references)
+
+---
+
+DEMONSTRATION
+-------------
+
+<img src="https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/demo-dashboard-overview.png" height="300" /><img src="https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/demo-dashboard-table-details.png" height="300" />
 
 ---
 
