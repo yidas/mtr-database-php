@@ -1,7 +1,7 @@
 MTR Database for PHP
 ====================
 
-MTR Batch processing storing in database with dashboard 
+MTR centralized monitoring dashboard with agent deployment
 
 [![Latest Stable Version](https://poser.pugx.org/yidas/mtr-database/v/stable?format=flat-square)](https://packagist.org/packages/yidas/mtr-database)
 [![License](https://poser.pugx.org/yidas/mtr-database/license?format=flat-square)](https://packagist.org/packages/yidas/mtr-database)
@@ -14,11 +14,12 @@ OUTLINE
 - [Requirements](#requirements)
 - [Installation](#installation)
     - [Download](#download) 
-    - [Startup](#startup)
-        - [Database Setup](#database-setup)
-        - [Agent Setup & Launch](#agent-setup--launch)
-        - [Dashboard](#dashboard)  
-- [Usage](#usage)
+- [Setup](#setup)
+    - [Database Setup](#database-setup)
+    - [Agent Setup & Launch](#agent-setup--launch)
+    - [API for collector & agents](#api-for-collector--agents)
+    - [Dashboard](#dashboard)  
+- [Advanced Usage](#advanced-usage)
     - [Agent Configuration](#agent-configuration)
     - [Purge](#purge) 
 - [References](#references)
@@ -34,8 +35,9 @@ DEMONSTRATION
 
 INTRODUCTION
 ------------
+Easy to deploy agents and collect MTR data into a database for monitoring via a web dashboard with charts.
 
-![Basic Flow](https://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/architecture-diagram.plantuml)
+![Basic Flow](https://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/yidas/mtr-database-php/main/img/architecture-diagram.plantuml?v=2)
 
 ---
 
@@ -75,9 +77,10 @@ After download, uncompress the package:
 $ tar -zxvf mtr-database-php.tar.gz
 ```
 
-### Startup
+SETUP
+-----------
 
-#### Database Setup
+### Database Setup
 
 After the download, you could start to set up the `config.inc.php` with your database connection:
 
@@ -103,7 +106,7 @@ $ php install.php
 Installation completed
 ```
 
-#### Agent Setup & Launch
+### Agent Setup & Launch
 
 The default setting of the agent can be configurated in `config.inc.php`:
 
@@ -121,10 +124,20 @@ The default setting of the agent can be configurated in `config.inc.php`:
         'tcp' => false,     // TCP mode
         'port' => 443,      // Port number for TCP mode
     ],
+    'api' => [
+        'key' => '',            // API key must be the same bewteen agent and collector
+        'agent' => [
+            'enabled' => false, // To send MTR data to collector via API Agent (deafult is database)
+            'reportUrl' => '',  // Collector's API URL
+        ],
+        'collector' => [
+            'enabled' => false, // To receive MTR data from agent via API
+        ],
+    ],
 ...
 ```
 
-After the installation, enjoy to run or set `launch.php` with your prefered arguments in crontab:
+After the setting, enjoy to run or set `launch.php` with your prefered arguments in crontab:
 
 ```shell
 $php launch.php
@@ -143,20 +156,57 @@ Set crontab into `/etc/cron.d/mtr-database`:
 
 > The default batch period is configured to be 10 minutes, so we can set the batch to be executed every 10 minutes.
 
-#### Dashboard
+### API for collector & agents
 
-The endpoint of MTR Dashboard is `/index.php` and it's enabled by default, you could place the project in the web path such as `/var/www/html/mtr-database/index.php`.
+Regarding the introduction structure diagram, it's better to collect agents' MTR data via API (Default is database).  
+The endpoint path of collector (`reportUrl`) is `/collect.php`, you could place the project in the web path such as `/var/www/html/mtr-database/index.php`.
 
-For the authentication, you could easily set the username and password in `config.ini.php`:
+Configuration for collector, the database setting is required:
+
+```php
+    'api' => [
+        'key' => 'your-own-api-key',            // API key must be the same bewteen agent and collector
+        'agent' => [
+            'enabled' => false, // To send MTR data to collector via API Agent (deafult is database)
+            'reportUrl' => '',  // Collector's API URL
+        ],
+        'collector' => [
+            'enabled' => true,  // To receive MTR data from agent via API
+        ],
+    ],
+    'database' => [
+```
+
+Configuration for agents:
+
+```php
+    'api' => [
+        'key' => 'your-own-api-key',            // API key must be the same bewteen agent and collector
+        'agent' => [
+            'enabled' => true, // To send MTR data to collector via API Agent (deafult is database)
+            'reportUrl' => 'https://your.host/mtr-database/collect.php',  // Collector's API URL
+        ],
+        'collector' => [
+            'enabled' => false, // To receive MTR data from agent via API
+        ],
+    ],
+```
+
+### Dashboard
+
+The endpoint path of MTR Dashboard is `/index.php` and it's disable by default, you could place the project in the web path such as `/var/www/html/mtr-database/index.php`.
+
+Turn the `enabled` on and set the username and password for the authentication in `config.ini.php`, the database setting is required:
 
 ```php
 ...
     'dashboard' => [
-        'enable' => true,
+        'enabled' => true,
         'username' => '',
         'password' => '',
         'categories' => [''],   // Category list for selection
     ],
+    'database' => [
 ...
 ```
 
@@ -164,7 +214,7 @@ For the authentication, you could easily set the username and password in `confi
 
 ---
 
-USAGE
+ADVANCED USAGE
 -----
 
 ### Agent Configuration

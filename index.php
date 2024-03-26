@@ -5,7 +5,7 @@ $config = require __DIR__ . '/config.inc.php';
 $dbConfig = & $config['database'];
 $config = $config['dashboard'];
 
-if (!$config['enable']) {
+if (!$config['enabled']) {
     die("Dashboard is disabled");
 }
 

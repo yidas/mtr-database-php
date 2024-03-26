@@ -1,29 +1,49 @@
 @startuml
+'skinparam linetype polyline
+skinparam linetype ortho
 
-package "IP .101" {
+package "Server with the database" {
   component "Agent" as agent
   component "Dashboard" as dashboard
+  component "Collector" as collector
   database "Database" as db
   Interface "HTTP" as http
-  dashboard -right- http
+  Interface "HTTP" as http_c
   agent -right-> db
+  dashboard -right- http
   dashboard <-left- db
+  collector -right- http_c
+  collector -down-> db
 }
 
-package "IP .102" {
+package "Agent Server 1" {
   component "Agent" as agent2 
 }
 
-package "IP .103" {
-  component "Agent" as agent3
+package "Agent Server 2" {
+  component "Agent" as agent3 
+}
+
+package "Server linked to the database" {
   component "Dashboard" as dashboard2
+  component "Agent" as agent4
   Interface "HTTP" as http2
   dashboard2 -right- http2
 }
 
-agent2 -down-> db
-agent3 -up-> db
-dashboard2 <-up- db
+actor "Admin" as admin
 
+agent2 -down-> http_c
+agent3 -down-> http_c
+agent4 -up-> db
+dashboard2 <-up- db
+admin -left- http
+admin -left- http2
+
+component "Target Server" as target
+agent <.left. target: MTR
+agent2 <.left. target: MTR
+agent3 <.left. target: MTR
+'agent4 <.left. target: MTR
 
 @enduml

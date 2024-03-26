@@ -13,6 +13,16 @@ return [
         'tcp' => false,     // TCP mode
         'port' => 443,      // Port number for TCP mode
     ],
+    'api' => [
+        'key' => '',            // API key must be the same bewteen agent and collector
+        'agent' => [
+            'enabled' => false, // To send MTR data to collector via API Agent (deafult is database)
+            'reportUrl' => '',  // Collector's API URL
+        ],
+        'collector' => [
+            'enabled' => false, // To receive MTR data from agent via API
+        ],
+    ],
     'database' => [
         'host' => 'localhost',
         'driver'    => 'mysql',
@@ -24,7 +34,7 @@ return [
         'collation' => 'utf8_unicode_ci',
     ],
     'dashboard' => [
-        'enable' => true,
+        'enabled' => false,
         'username' => '',
         'password' => '',
         'categories' => [''],   // Category list for selection
