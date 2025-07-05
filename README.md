@@ -1,7 +1,7 @@
 MTR Database for PHP
 ====================
 
-MTR centralized monitoring dashboard with agent deployment
+[MTR (My traceroute)](https://en.wikipedia.org/wiki/MTR_(software)) centralized monitoring dashboard with agent deployment
 
 [![Latest Stable Version](https://poser.pugx.org/yidas/mtr-database/v/stable?format=flat-square)](https://packagist.org/packages/yidas/mtr-database)
 [![License](https://poser.pugx.org/yidas/mtr-database/license?format=flat-square)](https://packagist.org/packages/yidas/mtr-database)
